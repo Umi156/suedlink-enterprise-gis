@@ -1,13 +1,39 @@
+# Python & Virtual Environments
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment Variables & Secrets
 .env
-arcgis_pro/*.gdb/
-arcgis_pro/Index/
-arcgis_pro/Backup/
-data/raw_bkg/
-data/raw_lfu/
+.env.*
+*.pem
+*.key
+
+# Esri ArcGIS Pro (Credentials, Binary GDBs, Locks & Caches)
 *.sde
-arcgis_pro/**/Index/
-arcgis_pro/**/.backups/
-arcgis_pro/**/ImportLog/
+*.lock
+*.gdb/
+**/Index/
+**/.backups/
+**/ImportLog/
+**/p20/
+**/p30/
+
+# Safe Software FME (Backup & Log Files — keep .fmw workspaces!)
+*.fmw.recover
+*.fsd
+*.log
+
+# Docker & Local Database Volumes
+pgdata/
+postgres_data/
+
+# OS & IDE Artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
