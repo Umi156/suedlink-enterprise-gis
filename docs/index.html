@@ -117,7 +117,7 @@
       showStep(0, document.querySelector('.step-btn'));
       map = L.map('map').setView([49.78, 9.96], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-      const base = 'https://githubusercontent.com';
+      const base = './data/';
       const [nat, buf, aln, cnf, qar] = await Promise.all(['natura','buffers','alignments','conflicts','quarantine'].map(n => fetch(base + n + '.geojson').then(r => r.json())));
       raw = { nat, buf, aln, cnf, qar };
 
@@ -141,3 +141,4 @@
   </script>
 </body>
 </html>
+
