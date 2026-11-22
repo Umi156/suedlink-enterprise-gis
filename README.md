@@ -51,3 +51,4 @@ An end-to-end Enterprise GIS, CAD/BIM ETL quality-gate, and multi-channel WebGIS
 ## 🔒 KRITIS Data Governance Note
 Because exact 525 kV SuedLink cable trench coordinates and borehole depths are restricted under German Critical Infrastructure (**KRITIS**) regulations, this repository models a realistic engineering twin of **Section BY-04 (Würzburg)** in `EPSG:25832` / `DHHN2016` paired with German environmental reference boundaries (`Natura 2000`) to demonstrate production-grade CAD/BIM QA/QC and spatial conflict analytics.
 
+
