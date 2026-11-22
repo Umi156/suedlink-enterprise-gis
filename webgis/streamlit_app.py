@@ -159,7 +159,7 @@ with tab3:
     st.subheader("3D Longitudinal Borehole & Trench Elevation Profile (DHHN2016)")
     fig_z = go.Figure()
     for _, row in f_aln.iterrows():
-        coords = list(row.geometry.coords)
+        coords = [pt for g in getattr(row.geometry, 'geoms', [row.geometry]) for pt in g.coords]
         xs = [i * (row["length_m"] / max(len(coords) - 1, 1)) for i in range(len(coords))]
         zs = [c if len(c) > 2 else row["min_elevation_z"] for c in coords]
         fig_z.add_trace(go.Scatter(
@@ -216,4 +216,5 @@ with tab6:
         "ROUND(ST_ZMin(geom)::numeric, 1) AS min_z FROM suedlink_prod.cable_alignments;",
         language="sql",
     )
+
 
