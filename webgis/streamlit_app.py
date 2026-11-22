@@ -3,6 +3,13 @@ import re
 from pathlib import Path
 import pandas as pd
 import geopandas as gpd
+_r=gpd.read_file
+def _s(*a,**k):
+ g=_r(*a,**k)
+ for x in g.columns:
+  if x!='geometry': g[x]=g[x].apply(lambda v: str(v) if hasattr(v,'isoformat') else v)
+ return g
+gpd.read_file=_s
 _orig_read_file = gpd.read_file
 def _safe_read_file(*args, **kwargs):
     gdf = _orig_read_file(*args, **kwargs)
@@ -135,6 +142,7 @@ with t_iso:
         st.error(f"❌ Invalid ISO 19650 Filename: {fn}")
     st.code("SELECT variant_name, ROUND(ST_Length(geom)::numeric,1) AS len_m, ST_ZMin(geom) AS min_z FROM suedlink_prod.cable_alignments;", language="sql")
     st.dataframe(alignments.drop(columns=["geom"]), use_container_width=True, hide_index=True)
+
 
 
 
