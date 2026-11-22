@@ -78,8 +78,8 @@ st.caption(f"Section BY-04 (Würzburg) • ETRS89 / UTM32N (EPSG:25832) & DHHN20
 k1, k2, k3, k4, k5 = st.columns(5)
 va = alignments[alignments["variant_name"] == "SL_TRASSE_VAR_A"]
 vb = alignments[alignments["variant_name"] == "SL_TRASSE_VAR_B"]
-k1.metric("VAR_A Length", f"{va['length_m'].iloc:,.1f} m", f"Min Z: {va['min_elevation_z'].iloc:.1f} m")
-k2.metric("VAR_B Length", f"{vb['length_m'].iloc:,.1f} m", f"Min Z: {vb['min_elevation_z'].iloc:.1f} m")
+k1.metric("VAR_A Length", f"{va['length_m'].iloc[0]:,.1f} m", f"Min Z: {va['min_elevation_z'].iloc[0]:.1f} m")
+k2.metric("VAR_B Length", f"{vb['length_m'].iloc[0]:,.1f} m", f"Min Z: {vb['min_elevation_z'].iloc[0]:.1f} m")
 k3.metric("Filtered Conflicts", f"{len(f_conf)}", f"of {len(conflicts)} total")
 k4.metric("HDD Crossings", f"{int((f_conf['recommended_method'] == 'HDD_Horizontal_Drilling').sum())}", "Trenchless Bore")
 k5.metric("FME Quarantined", f"{len(quarantine)}", "Self-Intersection Blocked", delta_color="inverse")
@@ -216,3 +216,4 @@ with tab6:
         "ROUND(ST_ZMin(geom)::numeric, 1) AS min_z FROM suedlink_prod.cable_alignments;",
         language="sql",
     )
+
