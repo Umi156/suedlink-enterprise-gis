@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SuedLink 525 kV HVDC — Interactive Enterprise GIS & FME Demo (Section BY-04 Würzburg)</title>
+  <title>SuedLink 525 kV HVDC — Enterprise GIS & FME Portal (Section BY-04 Würzburg)</title>
   <link rel="stylesheet" href="https://unpkg.com" />
   <script src="https://unpkg.com"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { height: 100vh; display: flex; flex-direction: column; background: #090e1a; color: #f1f5f9; font-family: system-ui, sans-serif; }
-    header { background: #0f172a; border-bottom: 1px solid #1e293b; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .nav-links { display: flex; gap: 8px; align-items: center; }
-    .nav-pill { padding: 5px 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: 600; }
-    .toolbar { background: #111827; border-bottom: 1px solid #1e293b; padding: 8px 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+    header { background: #0f172a; border-bottom: 1px solid #1e293b; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .nav-pill { padding: 6px 12px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: 700; display: inline-block; }
+    .toolbar { background: #111827; border-bottom: 1px solid #1e293b; padding: 8px 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
     .btn { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 5px 11px; border-radius: 6px; font-size: 11px; cursor: pointer; }
     .btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
     .workspace { display: flex; flex: 1; overflow: hidden; }
@@ -21,21 +21,20 @@
     .step-bar { display: flex; gap: 4px; margin: 8px 0; }
     .step-btn { flex: 1; padding: 5px; font-size: 10px; background: #0f172a; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; cursor: pointer; }
     .step-btn.active { background: #10b981; color: #052e16; font-weight: 700; }
-    img.preview { width: 100%; border-radius: 6px; border: 1px solid #334155; margin-top: 8px; display: none; }
     table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
     th, td { padding: 5px 4px; border-bottom: 1px solid #334155; text-align: left; }
     tbody tr { cursor: pointer; }
-    tbody tr:hover { background: rgba(56,189,248,0.15); }
+    tbody tr:hover { background: rgba(56,189,248,0.18); }
     #map { flex: 1; }
   </style>
 </head>
 <body>
   <header>
-    <div><strong>SUEDLINK 525 kV HVDC — ENTERPRISE GIS & FME QA/QC PORTFOLIO (WÜRZBURG BY-04)</strong></div>
+    <div><strong>SUEDLINK 525 kV HVDC — ENTERPRISE GIS & FME QA/QC PORTAL (WÜRZBURG BY-04)</strong></div>
     <div class="nav-links">
-      <a href="https://arcgis.com" target="_blank" class="nav-pill" style="background:#0284c7;color:#fff;">🌐 Esri ArcGIS Online App</a>
-      <a href="https://streamlit.app" target="_blank" class="nav-pill" style="background:#10b981;color:#052e16;">⚡ Streamlit 3D & MCDA Studio</a>
-      <span style="color:#38bdf8;font-size:11px;">● GitHub Pages Hub</span>
+      <a href="https://arcgis.com" target="_blank" rel="noopener" class="nav-pill" style="background:#0284c7;color:#fff;">🌐 Esri ArcGIS Online App</a>
+      <a href="https://streamlit.app" target="_blank" rel="noopener" class="nav-pill" style="background:#10b981;color:#052e16;">⚡ Streamlit 3D & MCDA Studio</a>
+      <a href="https://github.com" target="_blank" rel="noopener" class="nav-pill" style="background:#334155;color:#f1f5f9;">💻 GitHub Repo</a>
     </div>
   </header>
   <div class="toolbar">
@@ -61,7 +60,6 @@
           <button class="step-btn" onclick="showStep(3, this)">4. ArcGIS Pro</button>
         </div>
         <div id="step-desc" style="color:#cbd5e1;line-height:1.45;"></div>
-        <img id="step-img" class="preview" alt="Workflow Preview" onerror="this.style.display='none'" />
       </div>
       <div class="card alert" onclick="zoomQA()"><strong>🚨 FME QA/QC QUARANTINE (Click to Zoom)</strong><div id="qa-box" style="margin-top:6px;"></div></div>
       <div class="card"><strong>CONFLICT MATRIX (Click Row to Zoom)</strong><table><thead><tr><th>Variant</th><th>Conflict Type</th><th>Count</th><th>Area (m²)</th></tr></thead><tbody id="tbl-box"></tbody></table></div>
@@ -70,32 +68,42 @@
   </div>
   <script>
     const STEPS = [
-      { txt: "<b>Step 1 — ISO 19650 CAD/BIM Ingest:</b> Validates container naming (<code>SL-JAC-BY04-XX-M3-G-0001.dxf</code>) and transforms incoming AutoCAD Civil 3D polylines into official German grid <b>ETRS89 / UTM32N (EPSG:25832)</b> & <b>DHHN2016</b>.", img: "" },
-      { txt: "<b>Step 2 — FME GeometryValidator Gatekeeper:</b> Automated FME Workbench tests OGC validity. Clean 3D alignments route to <code>suedlink_prod</code>; self-intersecting defects are quarantined in <code>suedlink_qa.cad_rejected_features</code>.", img: "img/fme_workbench.png" },
-      { txt: "<b>Step 3 — PostGIS 3.4 Spatial Overlay:</b> Computes 10m/25m safety corridors (<code>ST_Buffer</code>), 3D minimum borehole elevation (<code>ST_ZMin</code>), and intersects Natura 2000, waterways, forest & industrial areas.", img: "" },
-      { txt: "<b>Step 4 — ArcGIS Pro Enterprise (.sde) & WebGIS:</b> Direct PostgreSQL/PostGIS connection (<code>localhost,5435</code>) serves live layers simultaneously to ArcGIS Pro, Esri ArcGIS Online, FastAPI REST, and Streamlit.", img: "img/arcgis_pro_sde.png" }
+      "<b>Step 1 — ISO 19650 CAD/BIM Ingest:</b> Validates container naming (<code>SL-JAC-BY04-XX-M3-G-0001.dxf</code>) and transforms incoming AutoCAD Civil 3D polylines into official German grid <b>ETRS89 / UTM32N (EPSG:25832)</b> & <b>DHHN2016</b>.",
+      "<b>Step 2 — FME GeometryValidator Gatekeeper:</b> Automated FME Workbench tests OGC validity. Clean 3D alignments route to <code>suedlink_prod</code>; self-intersecting defects are quarantined in <code>suedlink_qa.cad_rejected_features</code>.",
+      "<b>Step 3 — PostGIS 3.4 Spatial Overlay:</b> Computes 10m/25m safety corridors (<code>ST_Buffer</code>), 3D minimum borehole elevation (<code>ST_ZMin</code>), and intersects Natura 2000, waterways, forest & industrial areas.",
+      "<b>Step 4 — ArcGIS Pro Enterprise (.sde) & WebGIS:</b> Direct PostgreSQL/PostGIS connection (<code>localhost,5435</code>) serves live layers simultaneously to ArcGIS Pro, Esri ArcGIS Online, FastAPI REST, and Streamlit."
     ];
     window.showStep = (i, b) => {
       document.querySelectorAll('.step-btn').forEach(x => x.classList.remove('active'));
       if (b) b.classList.add('active');
-      document.getElementById('step-desc').innerHTML = STEPS[i].txt;
-      const im = document.getElementById('step-img');
-      if (STEPS[i].img) { im.src = STEPS[i].img; im.style.display = 'block'; } else { im.style.display = 'none'; }
+      document.getElementById('step-desc').innerHTML = STEPS[i];
       if (i === 1) zoomQA();
     };
 
-    let map, raw = {}, lyr = {};
+    let map, ctrl, raw = {}, lyr = {};
     const pop = (t, p) => `<b>${t}</b><br>` + Object.entries(p).map(([k,v]) => `${k}: <b>${v ?? '-'}</b>`).join('<br>');
 
     function render(mode = 'ALL', grp = null) {
+      if (ctrl) map.removeControl(ctrl);
       ['buf','aln','cnf'].forEach(k => lyr[k] && map.removeLayer(lyr[k]));
       const okV = v => mode === 'ALL' || mode === 'HDD_ONLY' || v === mode;
       lyr.buf = L.geoJSON(raw.buf, { filter: f => okV(f.properties.variant_name), style: { color: '#0d9488', weight: 1, fillOpacity: 0.15 } }).addTo(map);
-      lyr.aln = L.geoJSON(raw.aln, { filter: f => okV(f.properties.variant_name), style: f => ({ color: f.properties.variant_name === 'SL_TRASSE_VAR_A' ? '#10b981' : '#38bdf8', weight: 4 }), onEachFeature: (f,l) => l.bindPopup(pop('3D Cable Alignment', f.properties)) }).addTo(map);
+      lyr.aln = L.geoJSON(raw.aln, {
+        filter: f => okV(f.properties.variant_name),
+        style: f => ({ color: f.properties.variant_name === 'SL_TRASSE_VAR_A' ? '#10b981' : '#38bdf8', weight: 4 }),
+        onEachFeature: (f,l) => l.bindPopup(pop('3D Cable Alignment', f.properties))
+      }).addTo(map);
       lyr.cnf = L.geoJSON(raw.cnf, {
         filter: f => grp ? (f.properties.variant_name === grp.v && f.properties.conflict_type === grp.t) : (mode === 'HDD_ONLY' ? f.properties.recommended_method === 'HDD_Horizontal_Drilling' : okV(f.properties.variant_name)),
         style: f => ({ color: ['Waterway_Crossing','Natura2000_Overlap'].includes(f.properties.conflict_type) ? '#ef4444' : '#f59e0b', weight: 7 }),
         onEachFeature: (f,l) => l.bindPopup(pop('Spatial Conflict', f.properties))
+      }).addTo(map);
+      ctrl = L.control.layers(null, {
+        "3D Alignments": lyr.aln,
+        "Spatial Conflicts": lyr.cnf,
+        "10m & 25m Buffers": lyr.buf,
+        "Natura 2000 Zones": lyr.nat,
+        "FME Quarantine Defect": lyr.qa
       }).addTo(map);
       const target = grp ? lyr.cnf : lyr.aln;
       if (target.getBounds().isValid()) map.fitBounds(target.getBounds().pad(0.25));
@@ -108,12 +116,12 @@
     (async () => {
       showStep(0, document.querySelector('.step-btn'));
       map = L.map('map').setView([49.78, 9.96], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-      const base = '../data/webgis_snapshot/';
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+      const base = 'https://githubusercontent.com';
       const [nat, buf, aln, cnf, qar] = await Promise.all(['natura','buffers','alignments','conflicts','quarantine'].map(n => fetch(base + n + '.geojson').then(r => r.json())));
       raw = { nat, buf, aln, cnf, qar };
 
-      const q = qar.features?.[0]?.properties;
+      const q = qar.features && qar.features[0] ? qar.features[0].properties : null;
       if (q) document.getElementById('qa-box').innerHTML = `File: <b>${q.source_file}</b> | Layer: <b>${q.cad_layer}</b><br>${q.qa_error_reason}`;
 
       const agg = {};
@@ -125,12 +133,10 @@
       document.getElementById('tbl-box').innerHTML = Object.values(agg).sort((a,b) => (a.v+a.t).localeCompare(b.v+b.t))
         .map(r => `<tr onclick="focusGrp('${r.v}','${r.t}')"><td>${r.v.replace('SL_TRASSE_','')}</td><td>${r.t}</td><td>${r.c}</td><td>${r.a.toFixed(1)}</td></tr>`).join('');
 
-      L.geoJSON(nat, { style: { color: '#16a34a', weight: 1, fillOpacity: 0.18 }, onEachFeature: (f,l) => l.bindPopup(pop('Natura 2000', f.properties)) }).addTo(map);
+      lyr.nat = L.geoJSON(nat, { style: { color: '#16a34a', weight: 1, fillOpacity: 0.18 }, onEachFeature: (f,l) => l.bindPopup(pop('Natura 2000', f.properties)) }).addTo(map);
       lyr.qa = L.geoJSON(qar, { style: { color: '#f43f5e', weight: 4, dashArray: '8,6' }, onEachFeature: (f,l) => l.bindPopup(pop('Quarantined CAD Defect', f.properties)) }).addTo(map);
       render('ALL');
     })();
   </script>
 </body>
 </html>
-
-
