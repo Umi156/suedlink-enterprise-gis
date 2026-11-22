@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "quarantine",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "error_id": 1, "source_file": "SL-JAC-BY04-XX-M3-G-0001.dxf", "cad_layer": "SL_TRASSE_DEFECT", "qa_error_reason": "Failed OGC Geometry Validation (Self-Intersection)", "detected_at": "2026-11-22 10:12" }, "geometry": { "type": "LineString", "coordinates": [ [ 9.882266680401999, 49.793096190945235 ], [ 9.895992945850947, 49.783996305749191 ], [ 9.888965866127769, 49.779553143536923 ], [ 9.897481596705507, 49.789381526251532 ], [ 9.905514475394094, 49.77312878779928 ] ] } }
+]
+}

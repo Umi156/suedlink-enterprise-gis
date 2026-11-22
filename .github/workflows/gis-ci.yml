@@ -1,0 +1,22 @@
+name: SuedLink Enterprise GIS CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-gis-stack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate GeoJSON Snapshots & Python Apps
+        run: |
+          python -m py_compile webgis/app.py webgis/streamlit_app.py
+          python -c "import json, glob; files=glob.glob('data/webgis_snapshot/*.geojson'); assert len(files)==5, f'Expected 5 GeoJSONs, got {len(files)}'; [json.load(open(f)) for f in files]; print('All 5 WGS84 GeoJSON snapshots & Python services validated!')"
+      - name: Test Docker Image Build
+        run: docker build -t suedlink-webgis:ci .

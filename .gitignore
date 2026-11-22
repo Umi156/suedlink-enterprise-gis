@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+arcgis_pro/*.gdb/
+arcgis_pro/Index/
+arcgis_pro/Backup/
+data/raw_bkg/
+data/raw_lfu/

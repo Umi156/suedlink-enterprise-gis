@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SuedLink 525 kV HVDC — FastAPI & Leaflet WebGIS</title>
+  <link rel="stylesheet" href="/static/leaflet.css" />
+  <script src="/static/leaflet.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { height: 100vh; display: flex; flex-direction: column; background: #090e1a; color: #f1f5f9; font-family: system-ui, sans-serif; }
+    header { background: #0f172a; border-bottom: 1px solid #1e293b; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .toolbar { background: #111827; border-bottom: 1px solid #1e293b; padding: 8px 20px; display: flex; justify-content: space-between; }
+    .btn { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 5px 11px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-right: 4px; }
+    .btn.active { background: #0284c7; color: #fff; }
+    .workspace { display: flex; flex: 1; overflow: hidden; }
+    aside { width: 420px; background: #0f172a; border-right: 1px solid #1e293b; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 12px; }
+    .alert { background: rgba(136,19,55,0.35); border-color: #f43f5e; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+    th, td { padding: 5px 4px; border-bottom: 1px solid #334155; text-align: left; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: rgba(56,189,248,0.15); }
+    #map { flex: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>SUEDLINK 525 kV HVDC — FASTAPI & LEAFLET WEBGIS (SECTION BY-04)</strong></div>
+    <div style="color:#34d399;font-size:12px;">● Live PostGIS SDI</div>
+  </header>
+  <div class="toolbar">
+    <div>
+      <button class="btn active" onclick="setFilter('ALL', this)">All Variants</button>
+      <button class="btn" onclick="setFilter('SL_TRASSE_VAR_A', this)">VAR_A</button>
+      <button class="btn" onclick="setFilter('SL_TRASSE_VAR_B', this)">VAR_B</button>
+      <button class="btn" onclick="setFilter('HDD_ONLY', this)">HDD Crossings</button>
+    </div>
+    <div>
+      <button class="btn" style="border-color:#f43f5e;color:#fda4af;" onclick="zoomQA()">Zoom Quarantined Defect</button>
+      <button class="btn" onclick="setFilter('ALL', document.querySelector('.btn'))">Reset View</button>
+    </div>
+  </div>
+  <div class="workspace">
+    <aside>
+      <div class="card alert" onclick="zoomQA()"><strong>🚨 FME QA/QC QUARANTINE</strong><div id="qa-box" style="margin-top:6px;">Loading...</div></div>
+      <div class="card"><strong>3D ROUTE VARIANTS</strong><div id="route-box" style="margin-top:6px;"></div></div>
+      <div class="card"><strong>CONFLICT MATRIX (Click Row to Zoom)</strong><table><thead><tr><th>Variant</th><th>Type</th><th>Count</th><th>Area (m²)</th></tr></thead><tbody id="tbl-box"></tbody></table></div>
+    </aside>
+    <div id="map"></div>
+  </div>
+  <script>
+    let map, raw = {}, lyr = {};
+    const pop = (t, p) => `<b>${t}</b><br>` + Object.entries(p).map(([k,v]) => `${k}: <b>${v ?? '-'}</b>`).join('<br>');
+
+    function render(mode = 'ALL', grp = null) {
+      ['buf','aln','cnf'].forEach(k => lyr[k] && map.removeLayer(lyr[k]));
+      const okV = v => mode === 'ALL' || mode === 'HDD_ONLY' || v === mode;
+      lyr.buf = L.geoJSON(raw.buf, { filter: f => okV(f.properties.variant_name), style: { color: '#0d9488', weight: 1, fillOpacity: 0.15 } }).addTo(map);
+      lyr.aln = L.geoJSON(raw.aln, { filter: f => okV(f.properties.variant_name), style: f => ({ color: f.properties.variant_name === 'SL_TRASSE_VAR_A' ? '#10b981' : '#38bdf8', weight: 4 }), onEachFeature: (f,l) => l.bindPopup(pop('Alignment', f.properties)) }).addTo(map);
+      lyr.cnf = L.geoJSON(raw.cnf, {
+        filter: f => grp ? (f.properties.variant_name === grp.v && f.properties.conflict_type === grp.t) : (mode === 'HDD_ONLY' ? f.properties.recommended_method === 'HDD_Horizontal_Drilling' : okV(f.properties.variant_name)),
+        style: f => ({ color: ['Waterway_Crossing','Natura2000_Overlap'].includes(f.properties.conflict_type) ? '#ef4444' : '#f59e0b', weight: 7 }),
+        onEachFeature: (f,l) => l.bindPopup(pop('Conflict', f.properties))
+      }).addTo(map);
+      const target = grp ? lyr.cnf : lyr.aln;
+      if (target.getBounds().isValid()) map.fitBounds(target.getBounds().pad(0.25));
+    }
+
+    window.setFilter = (m, b) => { document.querySelectorAll('.btn').forEach(x => x.classList.remove('active')); if (b) b.classList.add('active'); render(m); };
+    window.focusGrp = (v, t) => render('ALL', { v, t });
+    window.zoomQA = () => { if (lyr.qa && lyr.qa.getBounds().isValid()) { map.fitBounds(lyr.qa.getBounds().pad(0.4)); lyr.qa.eachLayer(l => l.openPopup()); } };
+
+    (async () => {
+      const kpis = await fetch('/api/kpis').then(r => r.json());
+      const qa = kpis.quarantine[0];
+      if (qa) document.getElementById('qa-box').innerHTML = `File: <b>${qa.source_file}</b> | Layer: <b>${qa.cad_layer}</b><br>${qa.qa_error_reason}`;
+      document.getElementById('route-box').innerHTML = kpis.routes.map(r => `<div style="margin-top:4px;"><b>${r.variant_name}</b>: ${r.length_m} m | Min Z: ${r.min_elevation_z} m</div>`).join('');
+      document.getElementById('tbl-box').innerHTML = kpis.conflicts.map(c => `<tr onclick="focusGrp('${c.variant_name}','${c.conflict_type}')"><td>${c.variant_name.replace('SL_TRASSE_','')}</td><td>${c.conflict_type}</td><td>${c.count}</td><td>${c.total_sqm}</td></tr>`).join('');
+
+      map = L.map('map').setView([49.78, 9.96], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      const [nat, buf, aln, cnf, qar] = await Promise.all(['natura2000','buffers','alignments','conflicts','quarantine'].map(u => fetch('/api/layers/' + u).then(r => r.json())));
+      raw = { nat, buf, aln, cnf, qar };
+      L.geoJSON(nat, { style: { color: '#16a34a', weight: 1, fillOpacity: 0.18 }, onEachFeature: (f,l) => l.bindPopup(pop('Natura 2000', f.properties)) }).addTo(map);
+      lyr.qa = L.geoJSON(qar, { style: { color: '#f43f5e', weight: 4, dashArray: '8,6' }, onEachFeature: (f,l) => l.bindPopup(pop('Quarantined Defect', f.properties)) }).addTo(map);
+      render('ALL');
+    })();
+  </script>
+</body>
+</html>
