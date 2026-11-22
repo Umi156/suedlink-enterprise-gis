@@ -76,7 +76,7 @@
     window.showStep = (i, b) => {
       document.querySelectorAll('.step-btn').forEach(x => x.classList.remove('active'));
       if (b) b.classList.add('active');
-      document.getElementById('step-desc').innerHTML = STEPS[i];
+      document.getElementById('step-desc').innerHTML = STEPS.at(i);
       if (i === 1) zoomQA();
     };
 
@@ -121,7 +121,8 @@
       const [nat, buf, aln, cnf, qar] = await Promise.all(['natura','buffers','alignments','conflicts','quarantine'].map(n => fetch(base + n + '.geojson').then(r => r.json())));
       raw = { nat, buf, aln, cnf, qar };
 
-      const q = qar.features && qar.features[0] ? qar.features[0].properties : null;
+      const firstQ = qar.features ? qar.features.at(0) : null;
+      const q = firstQ ? firstQ.properties : null;
       if (q) document.getElementById('qa-box').innerHTML = `File: <b>${q.source_file}</b> | Layer: <b>${q.cad_layer}</b><br>${q.qa_error_reason}`;
 
       const agg = {};
