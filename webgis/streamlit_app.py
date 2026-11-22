@@ -3,6 +3,14 @@ import re
 from pathlib import Path
 import pandas as pd
 import geopandas as gpd
+_orig_read_file = gpd.read_file
+def _safe_read_file(*args, **kwargs):
+    gdf = _orig_read_file(*args, **kwargs)
+    for col in gdf.columns:
+        if col != "geometry" and ("datetime" in str(gdf[col].dtype) or "object" in str(gdf[col].dtype)):
+            gdf[col] = gdf[col].apply(lambda x: str(x) if hasattr(x, "isoformat") else x)
+    return gdf
+gpd.read_file = _safe_read_file
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
@@ -127,5 +135,6 @@ with t_iso:
         st.error(f"❌ Invalid ISO 19650 Filename: {fn}")
     st.code("SELECT variant_name, ROUND(ST_Length(geom)::numeric,1) AS len_m, ST_ZMin(geom) AS min_z FROM suedlink_prod.cable_alignments;", language="sql")
     st.dataframe(alignments.drop(columns=["geom"]), use_container_width=True, hide_index=True)
+
 
 
