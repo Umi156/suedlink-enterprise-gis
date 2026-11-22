@@ -127,3 +127,4 @@ with t_iso:
         st.error(f"❌ Invalid ISO 19650 Filename: {fn}")
     st.code("SELECT variant_name, ROUND(ST_Length(geom)::numeric,1) AS len_m, ST_ZMin(geom) AS min_z FROM suedlink_prod.cable_alignments;", language="sql")
     st.dataframe(alignments.drop(columns=["geom"]), use_container_width=True, hide_index=True)
+

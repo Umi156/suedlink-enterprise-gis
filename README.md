@@ -24,7 +24,7 @@ An end-to-end Enterprise GIS, CAD/BIM ETL quality-gate, and multi-channel WebGIS
 | :--- | :--- | :--- |
 | **1. Esri ArcGIS Online Enterprise Web App** | **[Launch ArcGIS Online Instant App](https://www.arcgis.com/apps/instant/sidebar/index.html?appid=e668b57def8646a8ab0d7fb9f02d0d60)** | Esri Hosted Feature Layers, custom cartographic symbology (crossings, 45° hatches, buffers), interactive layer switcher & pop-ups |
 | **2. GitHub Pages Hub & Playable Pipeline Tour** | **[Launch Interactive WebGIS & FME Tour](https://Umi156.github.io/suedlink-enterprise-gis/)** | Static Leaflet WebGIS, clickable 4-step FME/PostGIS/ArcGIS Pro walkthrough, conflict matrix zoom & defect quarantine inspector |
-| **3. Streamlit 3D & MCDA Spatial Studio** | **[Launch Streamlit Analytics Studio](<YOUR_STREAMLIT_APP_URL>)** | Interactive Folium map, Plotly conflict analytics, 3D HDD borehole profile (`DHHN2016`), MCDA risk sliders & ISO 19650 validator |
+| **3. Streamlit 3D & MCDA Spatial Studio** | **[Launch Streamlit Analytics Studio](https://streamlit.app)** | Interactive Folium map, Plotly conflict analytics, 3D HDD borehole profile (`DHHN2016`), MCDA risk sliders & ISO 19650 validator |
 
 ---
 
@@ -50,3 +50,4 @@ An end-to-end Enterprise GIS, CAD/BIM ETL quality-gate, and multi-channel WebGIS
 
 ## 🔒 KRITIS Data Governance Note
 Because exact 525 kV SuedLink cable trench coordinates and borehole depths are restricted under German Critical Infrastructure (**KRITIS**) regulations, this repository models a realistic engineering twin of **Section BY-04 (Würzburg)** in `EPSG:25832` / `DHHN2016` paired with German environmental reference boundaries (`Natura 2000`) to demonstrate production-grade CAD/BIM QA/QC and spatial conflict analytics.
+
