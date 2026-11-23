@@ -15,7 +15,7 @@ An end-to-end Enterprise GIS, CAD/BIM ETL quality-gate, and multi-channel WebGIS
 | :--- | :--- | :--- |
 | **1. Esri ArcGIS Online Enterprise Web App** | **[Launch ArcGIS Online Instant App](https://www.arcgis.com/apps/instant/sidebar/index.html?appid=e668b57def8646a8ab0d7fb9f02d0d60)** | Esri Hosted Feature Layers, custom cartographic symbology (crossings, 45° hatches, buffers), interactive layer switcher & pop-ups |
 | **2. GitHub Pages Hub & Playable Pipeline Tour** | **[Launch Interactive WebGIS & FME Tour](https://Umi156.github.io/suedlink-enterprise-gis/)** | Static Leaflet WebGIS, clickable 4-step FME/PostGIS/ArcGIS Pro walkthrough, conflict matrix zoom & defect quarantine inspector |
-| **3. Streamlit 3D & MCDA Spatial Studio** | **[Launch Streamlit Analytics Studio](https://streamlit.app)** | Interactive Folium map, Plotly conflict analytics, 3D HDD borehole profile (`DHHN2016`), MCDA risk sliders & ISO 19650 validator |
+| **3. Streamlit 3D & MCDA Spatial Studio** | **[Launch Streamlit Analytics Studio](https://suedlink-enterprise-gis-toxhwaagx8danxcfnuxzhx.streamlit.app/)** | Interactive Folium map, Plotly conflict analytics, 3D HDD borehole profile (`DHHN2016`), MCDA risk sliders & ISO 19650 validator |
 
 ---
 
