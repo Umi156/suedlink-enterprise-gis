@@ -37,3 +37,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+fme_workspaces/*.fmw
+fme_workspaces/*.fmwt
