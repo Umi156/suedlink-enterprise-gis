@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: suedlink_sdi
       POSTGRES_USER: gis_admin
-      POSTGRES_PASSWORD: SuedLink2026Secure
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5435:5432"
     volumes:
@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@suedlink-sdi.de
-      PGADMIN_DEFAULT_PASSWORD: SuedLink2026Secure
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
@@ -30,7 +30,7 @@ services:
     container_name: suedlink_streamlit
     restart: unless-stopped
     environment:
-      DB_URL: postgresql+psycopg2://gis_admin:SuedLink2026Secure@db:5432/suedlink_sdi
+      DB_URL: postgresql+psycopg2://gis_admin:${POSTGRES_PASSWORD}@db:5432/suedlink_sdi
     ports:
       - "8501:8501"
     depends_on:
@@ -46,7 +46,7 @@ services:
       DB_PORT: "5432"
       DB_NAME: suedlink_sdi
       DB_USER: gis_admin
-      DB_PASS: SuedLink2026Secure
+      DB_PASS: ${POSTGRES_PASSWORD}
     ports:
       - "8000:8000"
     depends_on:
@@ -54,4 +54,5 @@ services:
 
 volumes:
   postgis_data:
+
 

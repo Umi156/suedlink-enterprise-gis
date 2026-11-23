@@ -18,7 +18,7 @@ DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
 DB_PORT = os.getenv("DB_PORT", "5435")
 DB_NAME = os.getenv("DB_NAME", "suedlink_sdi")
 DB_USER = os.getenv("DB_USER", "gis_admin")
-DB_PASS = os.getenv("DB_PASS", "SuedLink2026Secure")
+DB_PASS = os.getenv("DB_PASS", "CHANGE_ME")
 
 ENGINE = create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 DB_CONFIG = {"host": DB_HOST, "port": int(DB_PORT), "dbname": DB_NAME, "user": DB_USER, "password": DB_PASS}
@@ -77,4 +77,5 @@ def layer_natura2000():
 @app.get("/api/layers/quarantine")
 def layer_quarantine():
     return geojson_from_postgis("SELECT error_id, source_file, cad_layer, qa_error_reason, ST_Transform(ST_Force2D(ST_CurveToLine(geom)),4326) AS geom FROM suedlink_qa.cad_rejected_features;")
+
 

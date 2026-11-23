@@ -26,7 +26,7 @@ from sqlalchemy import create_engine, text
 
 st.set_page_config(page_title="SuedLink 525 kV HVDC — Spatial Studio", page_icon="⚡", layout="wide")
 
-DB_URL = os.getenv("DB_URL", "postgresql+psycopg2://gis_admin:SuedLink2026Secure@127.0.0.1:5435/suedlink_sdi")
+DB_URL = os.getenv("DB_URL", "postgresql+psycopg2://gis_admin:CHANGE_ME@127.0.0.1:5435/suedlink_sdi")
 SNAP = Path(__file__).resolve().parent.parent / "data" / "webgis_snapshot"
 
 QUERIES = {
@@ -142,6 +142,7 @@ with t_iso:
         st.error(f"❌ Invalid ISO 19650 Filename: {fn}")
     st.code("SELECT variant_name, ROUND(ST_Length(geom)::numeric,1) AS len_m, ST_ZMin(geom) AS min_z FROM suedlink_prod.cable_alignments;", language="sql")
     st.dataframe(alignments.drop(columns=["geom", "geometry"], errors="ignore"), use_container_width=True, hide_index=True)
+
 
 
 
