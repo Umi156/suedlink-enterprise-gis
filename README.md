@@ -11,7 +11,7 @@ An end-to-end Enterprise GIS, CAD/BIM ETL quality-gate, and multi-channel WebGIS
 
 ## 🌐 Live Interactive Demos (3-Tier Cloud Portfolio)
 
-| Platform | Live Link | Capabilities Demonstrated |
+| Platform | Live Link | Core Functionality |
 | :--- | :--- | :--- |
 | **1. Esri ArcGIS Online Enterprise Web App** | **[Launch ArcGIS Online Instant App](https://www.arcgis.com/apps/instant/sidebar/index.html?appid=e668b57def8646a8ab0d7fb9f02d0d60)** | Esri Hosted Feature Layers, custom cartographic symbology (crossings, 45° hatches, buffers), interactive layer switcher & pop-ups |
 | **2. GitHub Pages Hub & Playable Pipeline Tour** | **[Launch Interactive WebGIS & FME Tour](https://Umi156.github.io/suedlink-enterprise-gis/)** | Static Leaflet WebGIS, clickable 4-step FME/PostGIS/ArcGIS Pro walkthrough, conflict matrix zoom & defect quarantine inspector |
