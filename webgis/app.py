@@ -79,3 +79,4 @@ def layer_quarantine():
     return geojson_from_postgis("SELECT error_id, source_file, cad_layer, qa_error_reason, ST_Transform(ST_Force2D(ST_CurveToLine(geom)),4326) AS geom FROM suedlink_qa.cad_rejected_features;")
 
 
+
